@@ -1,7 +1,3 @@
--- 20556 · Tirsdag · Version 1.2
--- Arbejdsfil: fact_trip og analysequeries
-
--- TODO: Implementér fact_trip.
 CREATE OR REPLACE TABLE fact_trip AS
 SELECT 
     -- Unik rækkenøgle (teknisk ID til tabellen)
@@ -30,13 +26,11 @@ SELECT
 FROM 'data/raw/yellow_tripdata_2025-01.parquet';
 
 
--- TODO: Kontrollér fact mod raw.
 SELECT 
     (SELECT COUNT(*) FROM 'data/raw/yellow_tripdata_2025-01.parquet') AS antal_raw,
     (SELECT COUNT(*) FROM fact_trip) AS antal_fact;
 
 
--- TODO: Kontrollér relationsdækning.
 SELECT 
     'Manglende pickup-zone' AS tjek,
     COUNT(*) AS antal 
@@ -72,16 +66,13 @@ LEFT JOIN dim_date d ON f.dropoff_date = d.date_actual
 WHERE d.date_actual IS NULL;
 
 
--- TODO: Kontrollér kardinalitet (at joins ikke eksploderer rækkeantallet)
 SELECT COUNT(f.trip_id) AS antal_med_zone_join
 FROM fact_trip f
 JOIN dim_zone z_pu ON f.pickup_location_id = z_pu.location_id
 JOIN dim_zone z_do ON f.dropoff_location_id = z_do.location_id;
 
 
--- TODO: Skriv to analysequeries nederst i denne fil.
 
--- Analysequery 1: Hvilke pickup-zoner giver de højeste gennemsnitlige drikkepenge? (Svarer på behov fra mandag)
 SELECT 
     z.borough,
     z.zone AS pickup_zone,
@@ -94,7 +85,6 @@ GROUP BY z.borough, z.zone
 ORDER BY gns_drikkepenge DESC
 LIMIT 10;
 
--- Analysequery 2: Udvikling i gennemsnitlig pris (fare_amount) fordelt på ugedag via dim_date
 SELECT 
     d.day_name,
     COUNT(f.trip_id) AS antal_ture,
